@@ -4,7 +4,6 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="theme-color" content="#111417">
-    <meta name="description" content="Cine Meter turns your iPhone into a fast CCT, exposure, waveform, and camera-match reference for real-world filmmaking.">
     <title>Cine Meter</title>
     <link rel="manifest" href="manifest.webmanifest">
     <link rel="stylesheet" href="styles.css">
@@ -32,7 +31,6 @@
           <div>
             <p class="eyebrow">Cine Meter</p>
             <h1>Exposure + WB</h1>
-            <p class="hero-copy">Quick CCT, exposure, ND, and camera-match reference from your phone.</p>
           </div>
           <div class="top-actions">
             <button id="waveformToggle" class="scope-toggle is-on" type="button" aria-pressed="true">Wave</button>
@@ -64,13 +62,8 @@
 
       <section class="control-panel" aria-label="Camera recommendations">
         <div class="status-row">
-          <p id="statusText">Turn your iPhone into a fast color temperature and exposure reference. No extra gear required.</p>
+          <p id="statusText">Allow camera access to start metering.</p>
           <button id="startButton" class="primary-button" type="button">Start Camera</button>
-        </div>
-
-        <div class="meter-card intro-card">
-          <span class="label">Designed for location work</span>
-          <p>Use the phone camera to estimate white balance, exposure, ND, low-light risk, and Sony/Canon matching notes before you roll.</p>
         </div>
 
         <div class="meter-card main-reading">
@@ -78,7 +71,7 @@
             <span class="label">Exposure Recommendation</span>
             <h2 id="exposureHeadline">Ready when you are</h2>
           </div>
-          <p id="exposureDetail">Open the camera for live readings. The waveform, ISO, WB, and clipping warnings will update from the scene.</p>
+          <p id="exposureDetail">Awaiting live frame. ISO and clipping warnings will update here.</p>
           <div class="bar-meter" aria-hidden="true">
             <div id="lumaFill"></div>
             <i class="target"></i>

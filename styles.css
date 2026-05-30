@@ -133,15 +133,6 @@ h1 {
   letter-spacing: 0;
 }
 
-.hero-copy {
-  max-width: 230px;
-  margin-top: 8px;
-  color: rgba(247, 248, 248, 0.78);
-  font-size: 0.8rem;
-  font-weight: 650;
-  line-height: 1.25;
-}
-
 .icon-button,
 .primary-button,
 .secondary-button,
@@ -358,12 +349,6 @@ h1 {
 .main-reading {
   display: grid;
   gap: 13px;
-}
-
-.intro-card {
-  background:
-    linear-gradient(135deg, rgba(69, 216, 129, 0.14), transparent 42%),
-    var(--surface);
 }
 
 h2 {

@@ -1,10 +1,9 @@
 {
   "name": "Cine Meter",
   "short_name": "Cine Meter",
-  "description": "A fast iPhone CCT, exposure, waveform, ND, and camera-match reference for filmmakers.",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#050607",
+  "background_color": "#101316",
   "theme_color": "#111417",
   "icons": []
 }
