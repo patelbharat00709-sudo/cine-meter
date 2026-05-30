@@ -4,9 +4,11 @@ const ctx = canvas.getContext("2d", { willReadFrequently: true });
 const waveformCanvas = document.querySelector("#waveformDisplay");
 const waveformCtx = waveformCanvas.getContext("2d");
 const waveformStatus = document.querySelector("#waveformStatus");
+const waveformOverlay = document.querySelector(".waveform-overlay");
 
 const startButton = document.querySelector("#startButton");
 const cameraToggle = document.querySelector("#cameraToggle");
+const waveformToggle = document.querySelector("#waveformToggle");
 const statusText = document.querySelector("#statusText");
 const isoValue = document.querySelector("#isoValue");
 const wbValue = document.querySelector("#wbValue");
@@ -61,6 +63,7 @@ let rafId = null;
 let selectedDeviceId = "";
 let latestReading = null;
 let savedShots = loadShots();
+let waveformVisible = localStorage.getItem("cineMeterWaveformVisible") !== "false";
 
 const targetLumaByLook = {
   neutral: 132,
@@ -427,6 +430,8 @@ function calculateNd(recommendedIso) {
 }
 
 function drawWaveform(waveform, luma, clippedPct, crushedPct) {
+  if (!waveformVisible) return;
+
   const width = waveformCanvas.width;
   const height = waveformCanvas.height;
 
@@ -479,6 +484,13 @@ function drawWaveform(waveform, luma, clippedPct, crushedPct) {
       waveformStatus.className = "";
     }
   }
+}
+
+function updateWaveformToggle() {
+  waveformOverlay.classList.toggle("is-hidden", !waveformVisible);
+  waveformToggle.classList.toggle("is-on", waveformVisible);
+  waveformToggle.setAttribute("aria-pressed", String(waveformVisible));
+  waveformToggle.textContent = waveformVisible ? "Wave" : "Off";
 }
 
 function drawWaveformTrace(columns, offsetX, drawWidth, height, color) {
@@ -858,6 +870,11 @@ function clamp(value, min, max) {
 }
 
 startButton.addEventListener("click", startCamera);
+waveformToggle.addEventListener("click", () => {
+  waveformVisible = !waveformVisible;
+  localStorage.setItem("cineMeterWaveformVisible", String(waveformVisible));
+  updateWaveformToggle();
+});
 cameraToggle.addEventListener("click", () => {
   selectedDeviceId = "";
   cameraSelect.value = "";
@@ -902,3 +919,4 @@ compareB.addEventListener("change", updateComparison);
 renderShotLibrary();
 populateCameraMetadata();
 updatePreviewControls();
+updateWaveformToggle();
