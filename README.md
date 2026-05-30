@@ -1,6 +1,8 @@
 # Cine Meter
 
-A phone-first camera meter web app for quick ISO and white-balance guidance on location.
+A phone-first CCT, exposure, waveform, ND, and camera-match reference for real-world filmmaking.
+
+Cine Meter turns your everyday iPhone into a fast on-location reference tool. It helps you move quickly, estimate white balance and exposure, save shot notes, and make more informed Sony/Canon camera decisions without carrying extra gear.
 
 ## Open locally
 
