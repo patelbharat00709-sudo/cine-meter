@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#111417">
+    <title>Cine Meter</title>
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="meter-stage" aria-label="Live camera meter">
+        <video id="camera" playsinline autoplay muted></video>
+        <div id="previewTint" class="preview-tint" aria-hidden="true"></div>
+        <canvas id="sampleCanvas" width="256" height="144" aria-hidden="true"></canvas>
+        <div class="waveform-overlay">
+          <div class="waveform-head">
+            <span>Waveform</span>
+            <strong id="waveformStatus">Waiting</strong>
+          </div>
+          <canvas id="waveformDisplay" width="512" height="160" aria-label="Live exposure waveform"></canvas>
+          <div class="waveform-scale" aria-hidden="true">
+            <span>100</span>
+            <span>50</span>
+            <span>0</span>
+          </div>
+        </div>
+
+        <div class="top-bar">
+          <div>
+            <p class="eyebrow">Cine Meter</p>
+            <h1>Exposure + WB</h1>
+          </div>
+          <button id="cameraToggle" class="icon-button" type="button" aria-label="Switch camera" title="Switch camera">
+            <span aria-hidden="true">↺</span>
+          </button>
+        </div>
+
+        <div class="focus-reticle" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </div>
+
+        <div class="reading-strip">
+          <article>
+            <span>ISO</span>
+            <strong id="isoValue">--</strong>
+          </article>
+          <article>
+            <span>WB</span>
+            <strong id="wbValue">--</strong>
+          </article>
+          <article>
+            <span>ND</span>
+            <strong id="ndValue">--</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="control-panel" aria-label="Camera recommendations">
+        <div class="status-row">
+          <p id="statusText">Allow camera access to start metering.</p>
+          <button id="startButton" class="primary-button" type="button">Start Camera</button>
+        </div>
+
+        <div class="meter-card main-reading">
+          <div>
+            <span class="label">Exposure Recommendation</span>
+            <h2 id="exposureHeadline">Ready when you are</h2>
+          </div>
+          <p id="exposureDetail">Awaiting live frame. ISO and clipping warnings will update here.</p>
+          <div class="bar-meter" aria-hidden="true">
+            <div id="lumaFill"></div>
+            <i class="target"></i>
+          </div>
+          <div class="scale-row" aria-hidden="true">
+            <span>Dark</span>
+            <span>Good</span>
+            <span>Bright</span>
+          </div>
+        </div>
+
+        <div class="grid-two">
+          <div class="meter-card">
+            <span class="label">White Balance</span>
+            <h3 id="wbHeadline">--</h3>
+            <p id="wbDetail">Waiting for a camera frame.</p>
+            <div class="color-chip" id="colorChip"></div>
+          </div>
+
+          <div class="meter-card">
+            <span class="label">Scene Health</span>
+            <h3 id="sceneHeadline">--</h3>
+            <p id="sceneDetail">Highlight and shadow warnings will appear here.</p>
+          </div>
+        </div>
+
+        <div class="meter-card lowlight-card">
+          <div class="capture-head">
+            <div>
+              <span class="label">Low Light / Noise</span>
+              <h3 id="noiseHeadline">Waiting for reading</h3>
+            </div>
+            <strong id="noiseBadge" class="noise-badge">--</strong>
+          </div>
+          <div class="noise-meter" aria-hidden="true">
+            <span id="noiseFill"></span>
+          </div>
+          <p id="noiseDetail">The app will compare the recommended ISO against a clean ISO limit for the selected Sony or Canon setup.</p>
+          <div class="lowlight-options">
+            <label>
+              <span>Noise Limit</span>
+              <select id="noiseLimit">
+                <option value="clean" selected>Clean</option>
+                <option value="balanced">Balanced</option>
+                <option value="push">Push</option>
+              </select>
+            </label>
+            <label>
+              <span>Max ISO</span>
+              <select id="maxCleanIso">
+                <option>800</option>
+                <option>1600</option>
+                <option selected>3200</option>
+                <option>6400</option>
+                <option>12800</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="meter-card preview-card">
+          <div class="capture-head">
+            <div>
+              <span class="label">Camera Match Preview</span>
+              <h3 id="previewHeadline">Sony / Canon Metadata</h3>
+            </div>
+            <button id="resetPreviewButton" class="ghost-button" type="button">Reset</button>
+          </div>
+          <div class="slider-grid">
+            <label>
+              <span>Preview WB <strong id="previewWbValue">5600K</strong></span>
+              <input id="previewWb" type="range" min="2500" max="9000" step="100" value="5600">
+            </label>
+            <label>
+              <span>Preview ISO <strong id="previewIsoValue">400</strong></span>
+              <input id="previewIso" type="range" min="50" max="6400" step="1" value="400">
+            </label>
+          </div>
+          <p id="previewDetail">Move the sliders to preview the direction of WB and ISO before changing the Sony or Canon camera.</p>
+        </div>
+
+        <div class="meter-card capture-card">
+          <div class="capture-head">
+            <div>
+              <span class="label">Shot Library</span>
+              <h3>Save Reading</h3>
+            </div>
+            <div class="button-pair">
+              <button id="capturePhotoButton" class="secondary-button" type="button">Capture Photo</button>
+              <button id="saveShotButton" class="ghost-button" type="button">Save</button>
+            </div>
+          </div>
+          <label class="wide-label">
+            <span>Notes</span>
+            <textarea id="shotNotes" rows="3" placeholder="Scene, camera, lens, gels, weather, matching notes"></textarea>
+          </label>
+          <p id="locationStatus">Capture Photo saves a reference image with settings written on it. Location tags are optional.</p>
+        </div>
+
+        <div class="meter-card library-card">
+          <div class="capture-head">
+            <div>
+              <span class="label">Scene Compare</span>
+              <h3 id="libraryCount">No saved readings</h3>
+            </div>
+            <button id="clearShotsButton" class="ghost-button" type="button">Clear</button>
+          </div>
+          <div class="compare-controls">
+            <label>
+              <span>Reference</span>
+              <select id="compareA"></select>
+            </label>
+            <label>
+              <span>Match</span>
+              <select id="compareB"></select>
+            </label>
+          </div>
+          <p id="compareResult">Save two readings to compare exposure and white balance.</p>
+          <div id="shotList" class="shot-list"></div>
+        </div>
+
+        <form class="settings" aria-label="Meter settings">
+          <label class="camera-select">
+            <span>Camera</span>
+            <select id="cameraSelect">
+              <option value="">Auto Back Camera</option>
+            </select>
+          </label>
+          <label>
+            <span>Brand</span>
+            <select id="cameraBrand">
+              <option value="Sony" selected>Sony</option>
+              <option value="Canon">Canon</option>
+            </select>
+          </label>
+          <label>
+            <span>Model</span>
+            <select id="cameraModel"></select>
+          </label>
+          <label>
+            <span>Profile</span>
+            <select id="pictureProfile"></select>
+          </label>
+          <label>
+            <span>Base ISO</span>
+            <select id="baseIso">
+              <option>100</option>
+              <option>200</option>
+              <option selected>400</option>
+              <option>800</option>
+              <option>1600</option>
+              <option>3200</option>
+            </select>
+          </label>
+          <label>
+            <span>Frame Rate</span>
+            <select id="fps">
+              <option>24</option>
+              <option selected>25</option>
+              <option>30</option>
+              <option>50</option>
+              <option>60</option>
+            </select>
+          </label>
+          <label>
+            <span>Shutter</span>
+            <select id="shutter">
+              <option value="180" selected>180°</option>
+              <option value="144">144°</option>
+              <option value="90">90°</option>
+              <option value="360">360°</option>
+            </select>
+          </label>
+          <label>
+            <span>Look</span>
+            <select id="look">
+              <option value="neutral" selected>Neutral</option>
+              <option value="skin">Skin Priority</option>
+              <option value="highlight">Protect Highlights</option>
+              <option value="lowkey">Low Key</option>
+            </select>
+          </label>
+          <label>
+            <span>Target ISO</span>
+            <select id="targetIso">
+              <option>100</option>
+              <option selected>200</option>
+              <option>400</option>
+              <option>800</option>
+            </select>
+          </label>
+          <label>
+            <span>Low Light</span>
+            <select id="lowLightMode">
+              <option value="off">Off</option>
+              <option value="protect" selected>Protect Noise</option>
+              <option value="see">See In Dark</option>
+            </select>
+          </label>
+          <label>
+            <span>Scope</span>
+            <select id="waveformMode">
+              <option value="luma" selected>Luma</option>
+              <option value="rgb">RGB Parade</option>
+            </select>
+          </label>
+        </form>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>

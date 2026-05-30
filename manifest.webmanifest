@@ -1,0 +1,9 @@
+{
+  "name": "Cine Meter",
+  "short_name": "Cine Meter",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#101316",
+  "theme_color": "#111417",
+  "icons": []
+}
